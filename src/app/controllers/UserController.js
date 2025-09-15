@@ -29,6 +29,13 @@ class UserController {
 
     const { name, email, password_hash, admin } = req.body
 
+    const userExists = await User.findOne({ where: { email } }) //vai no banco com o findOne e procura um email igual ao que ta chegando no corpo da requisição
+
+    //null, false, underfined => não tem valor
+    if (userExists) {
+      return res.status(400).json({ error: "User already exists" })
+    }
+
     const user = await User.create({
       id: v4(),
       name,
