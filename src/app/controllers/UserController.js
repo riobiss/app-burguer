@@ -14,7 +14,7 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string().email().required(),
-      password_hash: Yup.string().required().min(8),
+      password: Yup.string().required().min(8),
       admin: Yup.boolean(),
     })
     /*     if (!(await schema.isValid(req.body))) {
@@ -27,7 +27,7 @@ class UserController {
       return res.status(400).json({ error: err.errors })
     }
 
-    const { name, email, password_hash, admin } = req.body
+    const { name, email, password, admin } = req.body
 
     const userExists = await User.findOne({ where: { email } }) //vai no banco com o findOne e procura um email igual ao que ta chegando no corpo da requisição
 
@@ -40,7 +40,7 @@ class UserController {
       id: v4(),
       name,
       email,
-      password_hash,
+      password,
       admin,
     })
     return res.status(201).json({ id: user.id, name, email, admin }) //retorna pra o front apenas os dados que queremos
