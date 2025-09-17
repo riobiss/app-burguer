@@ -22,7 +22,13 @@ class ProductController {
       category,
       path,
     })
+
     return res.json(product)
+  }
+  async index(req, res) {
+    const products = await Product.findAll() // traz todos os produtos
+
+    return res.json(products) // retorna em formato json
   }
 }
 
