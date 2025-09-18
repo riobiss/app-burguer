@@ -1,5 +1,7 @@
 import * as Yup from "yup"
 import User from "../models/User.js"
+import jwt from "jsonwebtoken"
+import authConfig from "../../config/auth.js"
 
 class SessionController {
   async store(req, res) {
@@ -19,18 +21,18 @@ class SessionController {
     const { email, password } = req.body
 
     const user = await User.findOne({ where: { email } })
-    if (!user) {
-      userEmailOrPasswordIncorrect()
-    }
-    if (!(await user.checkPassword(password))) {
-      userEmailOrPasswordIncorrect()
-    }
+    if (!user) userEmailOrPasswordIncorrect()
+
+    if (!(await user.checkPassword(password))) userEmailOrPasswordIncorrect()
 
     return res.json({
       id: user.id,
       name: user.name,
       email: user.email,
       admin: user.admin,
+      token: jwt.sign({ id: user.id }, authConfig.secret, {
+        expiresIn: authConfig.expiresIn,
+      }),
     })
   }
 }
