@@ -1,0 +1,61 @@
+import * as Yup from "yup"
+import Product from "../models/Product.js"
+import Category from "../models/Category.js"
+import Order from "../schemas/Order.js"
+
+class OrderController {
+  async store(req, res) {
+    const schema = Yup.object().shape({
+      products: Yup.array()
+        .required()
+        .of(
+          Yup.object().shape({
+            id: Yup.number().required(),
+            quantity: Yup.number().required(),
+          }),
+        ),
+    })
+    try {
+      await schema.validateSync(req.body, { abortEarly: false })
+    } catch (err) {
+      return res.status(400).json({ error: err.errors })
+    }
+    const productsId = req.body.products.map((product) => {
+      return product.id
+    })
+
+    const orderProducts = await Product.findAll({
+      where: {
+        id: productsId,
+      },
+      include: [
+        {
+          model: Category,
+          as: "category",
+          attributes: ["name"],
+        },
+      ],
+    })
+
+    const editedProduct = orderProducts.map((product) => {
+      const productIndex = req.body.products.findIndex(
+        (requestProduct) => requestProduct.id === product.id,
+      )
+
+      const newProduct = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        category: product.category.name,
+        url: product.url,
+        quantity: req.body.products[productIndex].quantity,
+      }
+
+      return newProduct
+    })
+
+    return res.status(201).json(editedProduct)
+  }
+}
+
+export default new OrderController()

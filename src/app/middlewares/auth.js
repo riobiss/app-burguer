@@ -13,6 +13,7 @@ export default (req, res, next) => {
         throw new Error() //se tem erro cai no catch
       }
       req.userId = decoded.id
+      req.userName = decoded.name
 
       return next()
     })
