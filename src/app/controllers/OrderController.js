@@ -53,8 +53,17 @@ class OrderController {
 
       return newProduct
     })
+    const order = {
+      user: {
+        id: req.userId,
+        name: req.userName,
+      },
+      products: editedProduct,
+      status: "Pedido realizado",
+    }
+    const OrderResponse = await Order.create(order)
 
-    return res.status(201).json(editedProduct)
+    return res.status(201).json(OrderResponse)
   }
 }
 
