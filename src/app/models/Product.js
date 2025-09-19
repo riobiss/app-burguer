@@ -7,6 +7,7 @@ class Product extends Model {
         name: Sequelize.STRING,
         price: Sequelize.DECIMAL(10, 2),
         path: Sequelize.STRING,
+        offer: Sequelize.BOOLEAN,
         url: {
           type: Sequelize.VIRTUAL, // campo virtual, não existe na tabela
           get() {
