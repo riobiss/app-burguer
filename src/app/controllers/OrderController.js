@@ -65,6 +65,11 @@ class OrderController {
 
     return res.status(201).json(OrderResponse)
   }
+  async index(req, res) {
+    const orders = await Order.find()
+
+    return res.json(orders)
+  }
 }
 
 export default new OrderController()
