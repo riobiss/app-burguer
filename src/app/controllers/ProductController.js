@@ -1,6 +1,7 @@
 import * as Yup from "yup"
 import Product from "../models/Product.js"
 import Category from "../models/Category.js"
+import User from "../models/User.js"
 
 class ProductController {
   async store(req, res) {
@@ -9,6 +10,11 @@ class ProductController {
       price: Yup.number().positive().required(), // preço tem que ser positivo
       category_id: Yup.number().required(),
     })
+    const { admin: isAdmin } = await User.findByPk(req.userId)
+
+    if (!isAdmin) {
+      return res.status(401).json()
+    }
 
     try {
       await schema.validateSync(req.body, { abortEarly: false }) // abortEarly: false para validar todos os campos e retornar todos os erros de uma vez

@@ -2,6 +2,7 @@ import * as Yup from "yup"
 import Product from "../models/Product.js"
 import Category from "../models/Category.js"
 import Order from "../schemas/Order.js"
+import User from "../models/User.js"
 
 class OrderController {
   async store(req, res) {
@@ -75,6 +76,12 @@ class OrderController {
     const schema = Yup.object().shape({
       status: Yup.string().required(),
     })
+    const { admin: isAdmin } = await User.findByPk(req.userId)
+
+    if (!isAdmin) {
+      return res.status(401).json()
+    }
+
     try {
       await schema.validateSync(req.body, { abortEarly: false })
     } catch (err) {
